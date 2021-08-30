@@ -8,8 +8,6 @@ import com.mapbox.rctmgl.components.mapview.RCTMGLMapView;
 import com.mapbox.rctmgl.components.styles.RCTMGLStyle;
 import com.mapbox.rctmgl.components.styles.RCTMGLStyleFactory;
 import com.mapbox.rctmgl.utils.Logger;
-// import com.mapbox.rctmgl.components.styles.RCTMGLStyle;
-// import com.mapbox.rctmgl.components.styles.RCTMGLStyleFactory;
 
 public class RCTMGLCircleLayer extends RCTLayer<CircleLayer> {
     private String mSourceLayerID;
@@ -42,7 +40,6 @@ public class RCTMGLCircleLayer extends RCTLayer<CircleLayer> {
 
     @Override
     public void addStyles() {
-        Logger.e("Foo", "bar");
         RCTMGLStyleFactory.setCircleLayerStyle(mLayer, new RCTMGLStyle(getContext(), mReactStyle, mMap));
     }
 
