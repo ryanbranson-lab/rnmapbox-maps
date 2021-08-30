@@ -7,16 +7,6 @@
 RCT_EXPORT_VIEW_PROPERTY(sourceLayerID, NSString)
 
 // standard layer props
-RCT_EXPORT_VIEW_PROPERTY(id, NSString);
-RCT_EXPORT_VIEW_PROPERTY(sourceID, NSString);
-RCT_EXPORT_VIEW_PROPERTY(filter, NSArray);
-
-RCT_REMAP_VIEW_PROPERTY(aboveLayerID, reactAboveLayerID, NSString);
-RCT_REMAP_VIEW_PROPERTY(belowLayerID, reactBelowLayerID, NSString);
-RCT_REMAP_VIEW_PROPERTY(layerIndex, reactLayerIndex, NSNumber);
-RCT_EXPORT_VIEW_PROPERTY(reactStyle, NSDictionary);
-
-RCT_REMAP_VIEW_PROPERTY(maxZoomLevel, reactMaxZoomLevel, NSNumber);
-RCT_REMAP_VIEW_PROPERTY(minZoomLevel, reactMinZoomLevel, NSNumber);
+#include "CommonLayerProperties.H"
 
 @end
