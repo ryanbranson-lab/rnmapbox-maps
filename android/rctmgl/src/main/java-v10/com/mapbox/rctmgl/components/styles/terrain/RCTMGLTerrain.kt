@@ -1,65 +1,63 @@
 package com.mapbox.rctmgl.components.styles.terrain
 
 import android.content.Context
-import com.facebook.react.bridge.Dynamic
-import com.mapbox.rctmgl.components.styles.sources.AbstractSourceConsumer
+import com.facebook.react.bridge.ReadableMap
+import com.mapbox.maps.MapboxMap
 import com.mapbox.maps.extension.style.terrain.generated.Terrain
+import com.mapbox.maps.extension.style.terrain.generated.removeTerrain
 import com.mapbox.rctmgl.components.mapview.RCTMGLMapView
-import com.facebook.react.bridge.ReadableType
-import com.mapbox.rctmgl.utils.ExpressionParser
+import com.mapbox.rctmgl.components.styles.RCTMGLStyle
+import com.mapbox.rctmgl.components.styles.RCTMGLStyleFactory
+import com.mapbox.rctmgl.components.styles.sources.AbstractSourceConsumer
 import com.mapbox.rctmgl.utils.Logger
 
 class RCTMGLTerrain(context: Context?) : AbstractSourceConsumer(context) {
     override var iD: String? = null
     protected var mSourceID: String? = null
-    protected var mExaggeration: Dynamic? = null
     protected var mTerrain: Terrain? = null
+
+    // beginregion RCTLayer
+    @JvmField
+    protected var mMap: MapboxMap? = null
+
+    @JvmField
+    protected var mReactStyle: ReadableMap? = null
+
+    fun setReactStyle(reactStyle: ReadableMap?) {
+        mReactStyle = reactStyle
+        if (mTerrain != null) {
+            addStyles()
+        }
+    }
+    // endregion RCTLayer
 
     fun setSourceID(sourceID: String?) {
         mSourceID = sourceID
     }
 
     override fun addToMap(mapView: RCTMGLMapView) {
+        mMap = mapView.getMapboxMap()
         val terrain = makeTerrain()
-        addStyles(terrain)
         mTerrain = terrain
-        mapView.savedStyle?.let { mTerrain!!.bindTo(it) }
+        addStyles()
+        mapView.savedStyle?.let { terrain.bindTo(it) }
     }
 
     override fun removeFromMap(mapView: RCTMGLMapView) {
-        val emptyTerrain = Terrain("no-such-source-empty")
-        mapView.savedStyle?.let { emptyTerrain.bindTo(it) }
+        mapView.savedStyle?.let { it.removeTerrain() }
+        mMap = null
     }
 
     fun makeTerrain(): Terrain {
         return Terrain(mSourceID!!)
     }
 
-    fun setExaggeration(exaggeration: Dynamic?) {
-        mExaggeration = exaggeration
-        if (exaggeration != null) {
-            when (exaggeration!!.type) {
-                ReadableType.Number -> mTerrain?.exaggeration(exaggeration!!.asDouble())
-                ReadableType.Array -> mTerrain?.exaggeration(ExpressionParser.from(exaggeration!!.asArray())!!)
-                else -> mTerrain?.exaggeration(0.0)
-            }
-        }
-    }
-
-    fun addStyles(terrain: Terrain) {
-        when (mExaggeration!!.type) {
-            ReadableType.Number -> terrain.exaggeration(mExaggeration!!.asDouble())
-            ReadableType.Array -> terrain.exaggeration(
-                    ExpressionParser.from(mExaggeration!!.asArray())!!
+    fun addStyles() {
+        RCTMGLStyleFactory.setTerrainLayerStyle(
+            mTerrain, RCTMGLStyle(
+                context, mReactStyle!!,
+                mMap!!
             )
-            else -> Logger.e(
-                    "RCTMGLTerrain",
-                    "Unexpected type passed to exaggeration:$mExaggeration"
-            )
-        }
-    }
-
-    fun setSourceLayerID(sourceLayerID: String?) {
-        Logger.e("RCTMGLSkyLayer", "Source layer should not be set for source layer id")
+        )
     }
 }
