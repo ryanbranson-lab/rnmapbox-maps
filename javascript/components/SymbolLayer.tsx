@@ -58,7 +58,7 @@ export type Props = {
    */
   maxZoomLevel?: number;
 
-  style: SymbolLayerStyleProps;
+  style?: SymbolLayerStyleProps;
 
   children?: JSX.Element | JSX.Element[];
 };
